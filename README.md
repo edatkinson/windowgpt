@@ -23,6 +23,12 @@ When you close your terminal, it won't remember your key. To make sure it rememb
 
 Now if this doesn't work, you will have to supply the key to windowgpt using the --key flag.
 
+## Bugs
+
+If there is an error with Open AI versions, use the following command to revert to the older version:
+
+`pip install openai==0.28`
+
 ## Example
 
 windowgpt --p <"prompt"> --s <"save"> --key <"API_KEY">

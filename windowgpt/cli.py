@@ -27,12 +27,13 @@ def query_gpt_with_image(image: Image.Image, prompt: str, api_key) -> str:
         print("Set your key by exporting it in your shell:\n  export OPENAI_API_KEY=sk-...:\n")
         sys.exit(1)
 
-    openai.api_key = api_key
 
     base64_img = image_to_base64(image)
 
-    response = openai.ChatCompletion.create(
-        model="o4-mini",
+    client = openai.OpenAI(api_key=api_key)
+
+    response = client.chat.completions.create(
+        model="gpt-4o",
         messages=[
             {
                 "role": "user",
@@ -44,8 +45,9 @@ def query_gpt_with_image(image: Image.Image, prompt: str, api_key) -> str:
                 ],
             }
         ],
-        max_completion_tokens=10000, # change to max_tokens=1000 for model = gpt-4o
+        max_tokens=1000,
     )
+
     return response.choices[0].message.content
 
 def main():
@@ -83,7 +85,7 @@ def main():
     response = query_gpt_with_image(ss, args.p, api_key)
     print("GPT-4o Response:\n")
     print(response)
-    with open(f"/Users/edatkinson/Personal_Projects/ScreenGrab/responses/{filename.split('.')[0]}.txt", 'w') as f:
+    with open(f"{filename.split('.')[0]}.txt", 'w') as f:
         f.write(response)
     f.close()
 
