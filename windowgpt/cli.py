@@ -27,7 +27,6 @@ def query_gpt_with_image(image: Image.Image, prompt: str, api_key) -> str:
         print("Set your key by exporting it in your shell:\n  export OPENAI_API_KEY=sk-...:\n")
         sys.exit(1)
 
-
     base64_img = image_to_base64(image)
 
     client = openai.OpenAI(api_key=api_key)
@@ -53,8 +52,8 @@ def query_gpt_with_image(image: Image.Image, prompt: str, api_key) -> str:
 def main():
     parser = argparse.ArgumentParser(description="Send a screenshot and prompt to ChatGPT Vision")
     parser.add_argument("--p", type=str, required=True, help="Prompt to send with screenshot")
-    parser.add_argument("--s", action="store_true", help="Save the screenshot locally")
     parser.add_argument("--key", type=str, help="(Optional) Your OpenAI API key")
+    parser.add_argument("--s", type=str, help="Save the screenshot locally")
 
 
     args = parser.parse_args()
@@ -68,16 +67,6 @@ def main():
     print("1")
     ss = take_ss()
 
-    if args.s:
-        folder = './screenshots'
-        os.makedirs(folder, exist_ok=True)
-        filename = f"screenshot_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.png"
-        path = os.path.join(folder, filename)
-        ss.save(path)
-        print(f"Screenshot saved to: {path}")
-    else:
-        filename = f"screenshot_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.png"
-
 
     print("Sending screenshot and prompt to GPT-4o...")
     api_key = args.key or os.getenv("OPENAI_API_KEY")
@@ -85,9 +74,20 @@ def main():
     response = query_gpt_with_image(ss, args.p, api_key)
     print("GPT-4o Response:\n")
     print(response)
-    with open(f"{filename.split('.')[0]}.txt", 'w') as f:
-        f.write(response)
-    f.close()
+
+    if args.s is not None:
+        ss_folder = './screenshots'
+        os.makedirs(ss_folder, exist_ok=True)
+        filename = f"screenshot_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.png"
+        path = os.path.join(ss_folder, filename)
+        ss.save(path)
+        print(f"Screenshot saved to: {path}")
+        response_folder = "responses"
+        os.makedirs(response_folder, exist_ok=True)
+        res_filename = f"{filename.split('.')[0]}.txt"
+        with open(f"{response_folder}/{res_filename}", 'w') as f:
+            f.write(response)
+        f.close()
 
 
 
