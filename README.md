@@ -1,25 +1,37 @@
-# ScreenGrab 
-
-## Functionality
+# windowgpt
 
 <!-- For accessability if it stops working: 
 export PATH="$HOME/Personal_Projects/ScreenGrab:$PATH" 
 source ~/.bashrc
 -->
 
-When installing via pip, in order for the AI to work you must do the following:
-run:
-- export OPENAI_API_KEY=""
+## Install:
+`pip install windowgpt`
 
-to check it is set: 
-- echo $OPENAI_API_KEY
 
-To persist across sessions: 
-`echo 'export OPENAI_API_KEY=""' >> ~/.bashrc
-source ~/.bashrc` or zsh instead of bash
+## How to use:
 
-In your terminal, enter the command: windowgpt --p <"accompanied prompt with the ss"> --s <"save">
+Obtain an API key from [Open AI](https://platform.openai.com/docs/overview).
 
+In Terminal export this API key using the following command: `export OPEN_API_KEY="<your_key>"`
+
+When you close your terminal, it won't remember your key. To make sure it remembers your key run this command:
+
+`echo 'export OPENAI_API_KEY=""' >> ~/.bashrc`
+
+`source ~/.bashrc`
+
+Now if this doesn't work, you will have to supply the key to windowgpt using the --key flag.
+
+## Example
+
+windowgpt --p <"prompt"> --s <"save"> --key <"API_KEY">
+
+--p is a compulsory flag.
+
+--s only include if you want to save the screenshot.
+
+--key use when providing an API key.
 
 
 
