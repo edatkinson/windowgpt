@@ -29,7 +29,7 @@ windowgpt --p <"prompt"> --s <"save"> --key <"API_KEY">
 
 --p is a compulsory flag.
 
---s only include if you want to save the screenshot.
+--s if you want to save the response and the screenshot, specify the location.
 
 --key use when providing an API key.
 
