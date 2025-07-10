@@ -47,48 +47,78 @@ def query_gpt_with_image(image: Image.Image, prompt: str, api_key) -> str:
         max_tokens=1000,
     )
 
-    return response.choices[0].message.content
+    return response.choices[0].message.content or ""
+
+def query_gpt(prompt: str, api_key) -> str:
+    if not api_key:
+        # raise EnvironmentError("OPENAI_API_KEY environment variable not set.")
+
+        print("No OpenAI API key found.\n")
+        print("Set your key by exporting it in your shell:\n  export OPENAI_API_KEY=sk-...:\n")
+        sys.exit(1)
+
+    client = openai.OpenAI(api_key=api_key)
+
+    response = client.chat.completions.create(
+        model="gpt-4o",
+        messages=[
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": prompt}
+                ],
+            }
+        ],
+        max_tokens=1000,
+    )
+
+    return response.choices[0].message.content or ""
 
 def main():
     parser = argparse.ArgumentParser(description="Send a screenshot and prompt to ChatGPT Vision")
     parser.add_argument("--p", type=str, required=True, help="Prompt to send with screenshot")
     parser.add_argument("--key", type=str, help="(Optional) Your OpenAI API key")
     parser.add_argument("--s", type=str, help="Save the screenshot locally")
-
+    parser.add_argument("--both", action="store_true", help="Send both screenshot and prompt")
 
     args = parser.parse_args()
 
-    print("Taking screenshot in...")
-    time.sleep(1)
-    print("3")
-    time.sleep(1)
-    print("2")
-    time.sleep(1)
-    print("1")
-    ss = take_ss()
+    if not args.both:
+        print("No image required, querying now")
+        api_key = args.key or os.getenv("OPENAI_API_KEY")
+        response = query_gpt(args.p, api_key)
+        print("GPT-4o Response:\n")
+        print(response)
+    else:
+        print("Taking screenshot in...")
+        time.sleep(1)
+        print("3")
+        time.sleep(1)
+        print("2")
+        time.sleep(1)
+        print("1")
+        ss = take_ss()
 
+        print("Sending screenshot and prompt to GPT-4o...")
+        api_key = args.key or os.getenv("OPENAI_API_KEY")
 
-    print("Sending screenshot and prompt to GPT-4o...")
-    api_key = args.key or os.getenv("OPENAI_API_KEY")
+        response = query_gpt_with_image(ss, args.p, api_key)
+        print("GPT-4o Response:\n")
+        print(response)
 
-    response = query_gpt_with_image(ss, args.p, api_key)
-    print("GPT-4o Response:\n")
-    print(response)
+        if args.s is not None:
+            ss_folder = './screenshots'
+            os.makedirs(ss_folder, exist_ok=True)
+            filename = f"screenshot_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.png"
+            path = os.path.join(ss_folder, filename)
+            ss.save(path)
+            print(f"Screenshot saved to: {path}")
 
-    if args.s is not None:
-        ss_folder = './screenshots'
-        os.makedirs(ss_folder, exist_ok=True)
-        filename = f"screenshot_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.png"
-        path = os.path.join(ss_folder, filename)
-        ss.save(path)
-        print(f"Screenshot saved to: {path}")
-        response_folder = "responses"
-        os.makedirs(response_folder, exist_ok=True)
-        res_filename = f"{filename.split('.')[0]}.txt"
-        with open(f"{response_folder}/{res_filename}", 'w') as f:
-            f.write(response)
-        f.close()
-
+            response_folder = './responses'
+            os.makedirs(response_folder, exist_ok=True)
+            res_filename = f"{filename.split('.')[0]}.txt"
+            with open(os.path.join(response_folder, res_filename), 'w') as f:
+                f.write(response)
 
 
 

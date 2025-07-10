@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='windowgpt',
-    version='0.1.4',
+    version='0.1.9',
     description='Send a screenshot to ChatGPT Vision with a prompt',
     author='Ed Atkinson',
     url='https://github.com/yourusername/windowgpt',

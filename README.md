@@ -25,7 +25,7 @@ Now if this doesn't work, you will have to supply the key to windowgpt using the
 
 ## Example
 
-windowgpt --p <"prompt"> --s <"save"> --key <"API_KEY">
+windowgpt --p <"prompt"> --s <"save"> --key <"API_KEY"> --a "answr
 
 --p is a compulsory flag.
 
