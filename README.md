@@ -33,6 +33,7 @@ windowgpt --p <"prompt"> --s <"save"> --key <"API_KEY"> --a "answr
 
 --key use when providing an API key.
 
+--both is optional. Include if you want to take a ss, don't include if you dont want to use a ss.
 
 
 
